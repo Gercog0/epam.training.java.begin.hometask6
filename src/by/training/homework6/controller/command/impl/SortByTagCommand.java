@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class SortByTagCommand implements Command {
     @Override
-    public Map<String, String> execute(Map data) {
+    public Map<String, Object> execute(Map<String, Object> data) {
         return null;
     }
 }
