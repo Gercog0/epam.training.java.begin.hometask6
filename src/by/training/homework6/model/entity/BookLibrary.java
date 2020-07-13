@@ -31,18 +31,21 @@ public class BookLibrary {
     }
 
     public boolean addBook(Book book) throws UserException {
-        if (book == null) {
-            throw new UserException("Incorrect data");
+        if (book == null || books.contains(book)) {
+            throw new UserException("Incorrect data or book already exist...");
         }
 
-        if (getSize() >= MAX_CAPACITY || books.contains(book)) {
+        if (getSize() >= MAX_CAPACITY) {
             return false;
         }
 
         return this.books.add(book);
     }
 
-    public boolean deleteBook(Book book) {
+    public boolean deleteBook(Book book) throws UserException {
+        if (!this.books.contains(book)) {
+            throw new UserException("There is no such book...");
+        }
         return books.remove(book);
     }
 }

@@ -11,7 +11,7 @@ public class Book {
     private List<String> authors;
     private int quantityPages;
     private int year;
-    private double price;
+    private int price;
 
     private static final String BLANK = "";
 
@@ -22,7 +22,7 @@ public class Book {
     }
 
     public Book(String title, ArrayList<String> authors,
-                int quantityPages, int year, double price) {
+                int quantityPages, int year, int price) {
         this.id = IdGenerator.createId();
         this.title = title;
         this.authors = authors;
@@ -51,16 +51,42 @@ public class Book {
         return year;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
+    }
+
+    public String getParameter(Tag parameter) {
+        String result = BLANK;
+        switch (parameter) {
+            case TITLE:
+                result = getTitle();
+                break;
+            case AUTHORS:
+                result = getAuthors().toString();
+                break;
+            case PAGES:
+                result = Integer.toString(getQuantityPages());
+                break;
+            case YEAR:
+                result = Integer.toString(getYear());
+                break;
+            case PRICE:
+                result = Integer.toString(getPrice());
+                break;
+        }
+        return result;
     }
 
     public void setAuthors(ArrayList<String> authors) {
         this.authors = authors;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
+    }
+
+    public enum Tag {
+        TITLE, AUTHORS, PAGES, YEAR, PRICE;
     }
 
     @Override
@@ -75,7 +101,7 @@ public class Book {
         Book book = (Book) o;
 
         if (quantityPages != book.quantityPages || year != book.year ||
-                Double.compare(book.price, price) != 0 ||
+                price != book.price ||
                 (id != null ? !id.equals(book.id) : book.id != null) ||
                 (title != null ? !title.equals(book.title) : book.title != null)) {
             return false;
@@ -91,7 +117,7 @@ public class Book {
         result = 31 * result + (authors != null ? authors.hashCode() : 0);
         result = 31 * result + quantityPages;
         result = 31 * result + year;
-        result = 31 * result + (int) price;
+        result = 31 * result + price;
         return result;
     }
 
