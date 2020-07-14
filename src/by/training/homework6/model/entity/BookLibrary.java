@@ -1,8 +1,7 @@
 package by.training.homework6.model.entity;
 
-import by.training.homework6.exception.UserException;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BookLibrary {
@@ -23,16 +22,20 @@ public class BookLibrary {
     }
 
     public List<Book> getBooks() {
-        return books;
+        return Collections.unmodifiableList(books);
     }
 
     public int getSize() {
         return this.books.size();
     }
 
-    public boolean addBook(Book book) throws UserException {
+    public static int getMaxCapacity() {
+        return MAX_CAPACITY;
+    }
+
+    public boolean addBook(Book book) {
         if (book == null || books.contains(book)) {
-            throw new UserException("Incorrect data or book already exist...");
+            return false;
         }
 
         if (getSize() >= MAX_CAPACITY) {
@@ -42,10 +45,7 @@ public class BookLibrary {
         return this.books.add(book);
     }
 
-    public boolean deleteBook(Book book) throws UserException {
-        if (!this.books.contains(book)) {
-            throw new UserException("There is no such book...");
-        }
-        return books.remove(book);
+    public boolean deleteBook(String id) {
+        return books.removeIf(book -> book.getId().equals(id));
     }
 }

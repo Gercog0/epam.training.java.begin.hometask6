@@ -1,11 +1,8 @@
 package by.training.homework6.validator;
 
-import by.training.homework6.exception.ServiceException;
-import by.training.homework6.exception.UserException;
 import by.training.homework6.model.entity.Book;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BookValidator {
     private static final String SPACE = " ";
@@ -19,24 +16,25 @@ public class BookValidator {
     private static final int MAX_PRICE = 100000;
 
     public boolean validateBook(String title, ArrayList<String> authors,
-                                int quantityPages, int year, int price) throws UserException {
-        if (title == null || authors == null) {
-            throw new UserException("Incorrect data...");
-        }
+                                int quantityPages, int year, int price) {
         return validateTitle(title) && validateListAuthors(authors) &&
                 validateQuantityPages(quantityPages) && validateYear(year) && validatePrice(price);
     }
 
     public boolean validateByTag(Book.Tag tag, String data) {
+        if (data == null) {
+            return false;
+        }
         boolean result = true;
         switch (tag) {
             case TITLE:
+
                 if (!validateTitle(data)) {
                     result = false;
                 }
                 break;
             case PRICE:
-                if (validatePrice(Integer.parseInt(data))) {
+                if (!validatePrice(Integer.parseInt(data))) {
                     result = false;
                 }
                 break;
@@ -60,6 +58,9 @@ public class BookValidator {
     }
 
     public boolean validateListAuthors(ArrayList<String> authors) {
+        if (authors == null) {
+            return false;
+        }
         for (String author : authors) {
             if (!validateAuthor(author)) {
                 return false;
@@ -69,12 +70,14 @@ public class BookValidator {
     }
 
     public boolean validateAuthor(String author) {
+        if (author == null) {
+            return false;
+        }
         String[] nameSurname = author.split(SPACE);
         for (String part : nameSurname) {
             char[] letters = part.toCharArray();
-            System.out.println(Arrays.toString(letters));
             for (char letter : letters) {
-                if (!Character.isAlphabetic(letter)) {
+                if (!(Character.isAlphabetic(letter) || letter == ' ')) {
                     return false;
                 }
 
@@ -84,6 +87,9 @@ public class BookValidator {
     }
 
     public boolean validateTitle(String title) {
+        if (title == null) {
+            return false;
+        }
         return title.length() >= MIN_LENGTH_TITLE && title.length() <= MAX_LENGTH_TITLE;
     }
 

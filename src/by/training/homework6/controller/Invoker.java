@@ -9,7 +9,6 @@ public final class Invoker {
     private static Invoker instance;
 
     private Invoker() {
-
     }
 
     public static Invoker createInstance() {
@@ -19,10 +18,10 @@ public final class Invoker {
         return instance;
     }
 
-    public Map processRequest(String currentCommand, Map<String, String> data)
+    public Map processRequest(String currentCommand, String... parameters)
             throws UserException {
         CommandProvider provider = new CommandProvider();
         Command command = provider.provideCommand(currentCommand);
-        return command.execute(data);
+        return command.execute(parameters);
     }
 }

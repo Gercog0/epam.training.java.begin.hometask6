@@ -14,11 +14,6 @@ public enum CommandType {
             this.command = new DeleteBookCommand();
         }
     },
-    FIND_BY_ID {
-        {
-            this.command = new FindByIdCommand();
-        }
-    },
     SEARCH_BY_TAG {
         {
             this.command = new SearchByTagCommand();
@@ -31,6 +26,7 @@ public enum CommandType {
     };
 
     Command command;
+
     public Command getCommand() {
         return command;
     }

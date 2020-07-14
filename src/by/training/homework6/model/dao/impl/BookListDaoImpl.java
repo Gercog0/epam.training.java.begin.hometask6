@@ -1,6 +1,5 @@
 package by.training.homework6.model.dao.impl;
 
-import by.training.homework6.comparator.ComparatorType;
 import by.training.homework6.exception.DaoException;
 import by.training.homework6.model.dao.BookListDao;
 import by.training.homework6.model.entity.Book;
@@ -13,159 +12,55 @@ public class BookListDaoImpl implements BookListDao {
     private static BookListDaoImpl instance;
 
     private BookListDaoImpl() {
-
     }
 
     public static BookListDaoImpl createInstance() {
         if (instance == null) {
             instance = new BookListDaoImpl();
         }
-
         return instance;
     }
 
     @Override
-    public void addBook(Book book) throws DaoException {
-        List<Book> books = BookLibrary.createInstance().getBooks();
-        if (books.contains(book)) {
+    public void add(Book book) throws DaoException {
+        BookLibrary library = BookLibrary.createInstance();
+        if (library.getBooks().contains(book)) {
             throw new DaoException("The book already exists...");
         }
-        books.add(book);
+
+        if (library.getSize() == BookLibrary.getMaxCapacity()) {
+            throw new DaoException("No library space...");
+        }
+        library.addBook(book);
     }
 
     @Override
-    public void deleteBook(Book book) throws DaoException {
-        List<Book> books = BookLibrary.createInstance().getBooks();
-        if (!books.contains(book)) {
+    public void delete(String id) throws DaoException {
+        BookLibrary library = BookLibrary.createInstance();
+        if (!library.getBooks().contains(searchByTag(Book.Tag.ID, id).get(0))) {
             throw new DaoException("There is no such book...");
         }
-        books.remove(book);
+        library.deleteBook(id);
     }
 
     @Override
-    public Optional<Book> findById(String id) {
+    public List<Book> sortByTag(Comparator<Book> type) throws DaoException {
         List<Book> books = BookLibrary.createInstance().getBooks();
-        for (Book book : books) {
-            if (book.getId().equals(id)) {
-                return Optional.of(book);
-
-            }
+        List<Book> sortedList = books.stream().sorted(type).collect(Collectors.toList());
+        if (sortedList.isEmpty()) {
+            throw new DaoException("Books not found...");
         }
-        return Optional.empty();
+        return sortedList;
     }
 
     @Override
-    public List<Book> sortByTag(ComparatorType type) {
+    public List<Book> searchByTag(Book.Tag tag, String string) throws DaoException {
         List<Book> books = BookLibrary.createInstance().getBooks();
-        return books.stream().sorted(type.getComparator()).collect(Collectors.toList());
+        List<Book> foundBooks = books.stream().
+                filter(b -> b.getParameter(tag).contains(string)).collect(Collectors.toList());
+        if (foundBooks.isEmpty()) {
+            throw new DaoException("Nothing was found for the query...");
+        }
+        return foundBooks;
     }
-
-    @Override
-    public List<Book> searchByTag(Book.Tag tag, String string) {
-        List<Book> books = BookLibrary.createInstance().getBooks();
-        return books.stream().
-                filter(x -> x.getParameter(tag).contains(string)).collect(Collectors.toList());
-    }
-
-
-    // @Override
-    // public List<Book> findByTitle(String title) {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     for (Book book : books) {
-    //         if (book.getTitle().equals(title)) {
-    //             books.add(book);
-    //         }
-    //     }
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> findByAuthor(String author) {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     for (Book book : books) {
-    //         ArrayList<String> authors = (ArrayList<String>) book.getAuthors();
-    //         for (String currentAuthor : authors) {
-    //             if (currentAuthor.equals(author)) {
-    //                 books.add(book);
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> findByQuantityPages(int quantity) {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     for (Book book : books) {
-    //         if (book.getQuantityPages() == quantity) {
-    //             books.add(book);
-    //         }
-    //     }
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> findByYear(int year) {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     for (Book book : books) {
-    //         if (book.getYear() == year) {
-    //             books.add(book);
-    //         }
-    //     }
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> findByPrice(double price) {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     for (Book book : books) {
-    //         if (Double.compare(book.getPrice(), price) == 0) {
-    //             books.add(book);
-    //         }
-    //     }
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortById() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(Book::getId));
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortByTitle() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(Book::getTitle));
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortByAuthor() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(object -> object.getAuthors().get(0)));
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortByQuantityPages() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(Book::getQuantityPages));
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortByYear() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(Book::getYear));
-    //     return books;
-    // }
-//
-    // @Override
-    // public List<Book> sortByPrice() {
-    //     List<Book> books = BookLibrary.createInstance().getBooks();
-    //     books.sort(Comparator.comparing(Book::getPrice));
-    //     return books;
-    // }
 }

@@ -3,7 +3,9 @@ package by.training.homework6.model.entity;
 import by.training.homework6.util.IdGenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Book {
     private String id;
@@ -13,11 +15,37 @@ public class Book {
     private int year;
     private int price;
 
-    private static final String BLANK = "";
+    public enum Tag {
+        ID("id"), TITLE("title"), AUTHORS("authors"),
+        PAGES("pages"), YEAR("year"), PRICE("price");
+
+        private final String name;
+
+        Tag(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        // Converting string to enum for working with command
+        private static final Map<String, Tag> LOOKUP_MAP = new HashMap<>();
+
+        static {
+            for (Tag element : values()) {
+                LOOKUP_MAP.put(element.getName(), element);
+            }
+        }
+
+        public static Tag getTagByName(String name) {
+            return LOOKUP_MAP.get(name);
+        }
+    }
 
     public Book() {
         this.id = IdGenerator.createId();
-        this.title = BLANK;
+        this.title = "";
         this.authors = new ArrayList<>();
     }
 
@@ -56,8 +84,11 @@ public class Book {
     }
 
     public String getParameter(Tag parameter) {
-        String result = BLANK;
+        String result = "";
         switch (parameter) {
+            case ID:
+                result = getId();
+                break;
             case TITLE:
                 result = getTitle();
                 break;
@@ -83,10 +114,6 @@ public class Book {
 
     public void setPrice(int price) {
         this.price = price;
-    }
-
-    public enum Tag {
-        TITLE, AUTHORS, PAGES, YEAR, PRICE;
     }
 
     @Override
@@ -123,7 +150,7 @@ public class Book {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Book:\n");
+        StringBuilder sb = new StringBuilder("Book:\n");
         sb.append("ID: ").append(id).append("\n");
         sb.append("Title: ").append(title).append("\n");
         sb.append("Authors: ").append(authors).append("\n");

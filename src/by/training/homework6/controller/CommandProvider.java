@@ -7,9 +7,12 @@ import by.training.homework6.exception.UserException;
 
 public class CommandProvider {
     public Command provideCommand(String command) throws UserException {
-        Command currentCommand = new EmptyCommand();
+        if (command == null) {
+            throw new UserException("Incorrect data...");
+        }
+        Command currentCommand;
         if (command.isEmpty()) {
-            return currentCommand;
+            return new EmptyCommand();
         }
 
         try {
